@@ -147,10 +147,10 @@ graph TD
     K --> H
     J -->|<5%| L[Deploy to Prod]
     
-    style A fill:#d1e8ff,stroke:#0d6efd,stroke-width:2px
-    style L fill:#d1e7dd,stroke:#0f5132,stroke-width:2px
-    style E fill:#fff3cd,stroke:#ffc107,stroke-width:2px
-    style J fill:#fff3cd,stroke:#ffc107,stroke-width:2px
+    style A fill:#2563eb,color:#fff,stroke:#1e40af,stroke-width:3px
+    style L fill:#16a34a,color:#fff,stroke:#15803d,stroke-width:3px
+    style E fill:#ea580c,color:#fff,stroke:#c2410c,stroke-width:3px
+    style J fill:#ea580c,color:#fff,stroke:#c2410c,stroke-width:3px
 ```
 
 ### 1. Understand the Threat
