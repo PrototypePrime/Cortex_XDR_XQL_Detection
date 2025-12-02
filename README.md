@@ -105,17 +105,7 @@ Production-validated XQL detection rules optimized for Cortex XDR's endpoint tel
   - ✅ Registry Modifications
   - ✅ Authentication Events
 
-### Installation
 
-```bash
-# Clone repository
-git clone https://github.com/PrototypePrime/Cortex_XDR_XQL_Detection.git
-cd Cortex_XDR_XQL_Detection
-
-# Browse detections
-ls -la Endpoint/
-ls -la Network/
-```
 
 ### Test a Detection
 
@@ -157,10 +147,10 @@ graph TD
     K --> H
     J -->|<5%| L[Deploy to Prod]
     
-    style A fill:#e3f2fd
-    style L fill:#c8e6c9
-    style E fill:#fff9c4
-    style J fill:#fff9c4
+    style A fill:#d1e8ff,stroke:#0d6efd,stroke-width:2px
+    style L fill:#d1e7dd,stroke:#0f5132,stroke-width:2px
+    style E fill:#fff3cd,stroke:#ffc107,stroke-width:2px
+    style J fill:#fff3cd,stroke:#ffc107,stroke-width:2px
 ```
 
 ### 1. Understand the Threat
@@ -381,81 +371,6 @@ config case_sensitive = false timeframe = 24h
 ```
 
 </details>
-
----
-
-## 🔧 Detection Template Structure
-
-```xql
-/*
-==============================================================================
-CORTEX XDR XQL DETECTION
-==============================================================================
-Rule: [Descriptive Name]
-ID: XQL-[###]
-Author: PrototypePrime
-Date: [YYYY-MM-DD]
-MITRE: [T####] [Technique Name]
-Severity: [CRITICAL | HIGH | MEDIUM | LOW]
-==============================================================================
-
-WHAT IT DETECTS:
-[One-line description]
-
-ATTACK SCENARIO:
-[How attacker uses this technique]
-
-==============================================================================
-*/
-
-config case_sensitive = false timeframe = 7d
-| dataset = xdr_data
-| filter event_type = ENUM.PROCESS_LAUNCH
-    and [detection logic]
-| fields [relevant fields]
-| alter severity = "HIGH"
-
-/*
-==============================================================================
-TUNING
-==============================================================================
-Known False Positives:
-- [List expected FPs]
-
-Exclusions:
-and actor_process_image_name not in ("safe_app.exe")
-and agent_hostname not in ("admin-host")
-
-==============================================================================
-TESTING
-==============================================================================
-Test Command:
-[Command to generate test event]
-
-Expected Result:
-[What alert should show]
-
-==============================================================================
-RESPONSE
-==============================================================================
-Investigation Steps:
-1. [Review process tree/causality chain]
-2. [Check parent process legitimacy]
-3. [Analyze command line arguments]
-4. [Review network connections from process]
-
-Escalation Criteria:
-- [Unknown parent process]
-- [Execution outside business hours]
-- [Connection to suspicious IPs]
-
-==============================================================================
-REFERENCES
-==============================================================================
-- https://attack.mitre.org/techniques/T####/
-==============================================================================
-*/
-```
 
 ---
 
