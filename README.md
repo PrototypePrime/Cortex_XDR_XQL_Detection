@@ -8,7 +8,7 @@
 
 **Enterprise XQL Detection Rules for Palo Alto Cortex XDR**
 
-*Curated by PrototypePrime | Senior Security Engineer*
+*Curated by Mathan | Senior Security Engineer*
 
 [🚀 Quick Start](#-quick-start) • [📁 Categories](#-detection-categories) • [📖 Documentation](#-detection-development-workflow) • [🤝 Contributing](#-contributing)
 

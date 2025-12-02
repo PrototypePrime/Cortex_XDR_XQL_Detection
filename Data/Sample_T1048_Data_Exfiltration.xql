@@ -4,7 +4,7 @@ CORTEX XDR XQL DETECTION - DATA EXFILTRATION
 ==============================================================================
 Rule: Large Upload to External IP
 ID: XQL-DATA-001
-Author: PrototypePrime
+Author: Mathan
 Date: 2025-12-02
 MITRE: T1048 (Exfiltration)
 Severity: MEDIUM

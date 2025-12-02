@@ -4,7 +4,7 @@ CORTEX XDR XQL DETECTION - CLOUD CONSOLE LOGIN
 ==============================================================================
 Rule: Root/Admin Console Login
 ID: XQL-CLOUD-001
-Author: PrototypePrime
+Author: Mathan
 Date: 2025-12-02
 MITRE: T1078 (Valid Accounts)
 Severity: MEDIUM

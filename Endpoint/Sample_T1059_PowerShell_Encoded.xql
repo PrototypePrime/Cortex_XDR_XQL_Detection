@@ -4,7 +4,7 @@ CORTEX XDR XQL DETECTION - POWERSHELL ENCODED COMMAND
 ==============================================================================
 Rule: Suspicious PowerShell Execution with Encoded Commands
 ID: XQL-ENDPOINT-001
-Author: PrototypePrime
+Author: Mathan
 Date: 2025-12-02
 MITRE: T1059.001 (Command and Scripting Interpreter: PowerShell)
 Severity: HIGH

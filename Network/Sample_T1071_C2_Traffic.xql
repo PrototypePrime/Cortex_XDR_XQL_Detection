@@ -4,7 +4,7 @@ CORTEX XDR XQL DETECTION - C2 TRAFFIC
 ==============================================================================
 Rule: High Frequency Connections to Rare External IP
 ID: XQL-NET-001
-Author: PrototypePrime
+Author: Mathan
 Date: 2025-12-02
 MITRE: T1071 (Application Layer Protocol)
 Severity: HIGH

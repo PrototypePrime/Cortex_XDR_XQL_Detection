@@ -4,7 +4,7 @@ CORTEX XDR XQL DETECTION - PHISHING EMAIL
 ==============================================================================
 Rule: Suspicious Email Attachment
 ID: XQL-MAIL-001
-Author: PrototypePrime
+Author: Mathan
 Date: 2025-12-02
 MITRE: T1566 (Phishing)
 Severity: HIGH

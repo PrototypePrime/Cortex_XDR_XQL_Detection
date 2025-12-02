@@ -4,7 +4,7 @@ CORTEX XDR XQL DETECTION - BRUTE FORCE
 ==============================================================================
 Rule: Multiple Failed Logins from Single Source
 ID: XQL-AUTH-001
-Author: PrototypePrime
+Author: Mathan
 Date: 2025-12-02
 MITRE: T1110 (Brute Force)
 Severity: HIGH

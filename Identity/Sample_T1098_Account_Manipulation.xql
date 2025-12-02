@@ -4,7 +4,7 @@ CORTEX XDR XQL DETECTION - ACCOUNT MANIPULATION
 ==============================================================================
 Rule: User Added to Admin Group
 ID: XQL-ID-001
-Author: PrototypePrime
+Author: Mathan
 Date: 2025-12-02
 MITRE: T1098 (Account Manipulation)
 Severity: CRITICAL
