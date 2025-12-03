@@ -164,7 +164,14 @@ Select a MITRE ATT&CK technique with endpoint visibility:
 ### 2. Copy the XQL Template
 
 ```bash
-cp TEMPLATE_XQL_Detection.xql Endpoint/T1055_Process_Injection.xql
+# Standard BIOC Rule (MITRE Aligned)
+cp templates/TEMPLATE_BIOC_Rule.xql Endpoint/T1055_Process_Injection.xql
+
+# Threat Hunting Hypothesis
+cp templates/TEMPLATE_Threat_Hunting.xql Endpoint/Hunt_T1055_Anomalies.xql
+
+# Behavioral Anomaly Detection
+cp templates/TEMPLATE_Anomaly_Detection.xql Endpoint/T1055_Baseline_Deviation.xql
 ```
 
 ### 3. Write the XQL Query
@@ -212,6 +219,34 @@ config case_sensitive = false timeframe = 24h
 actor_process_image_name        // powershell.exe
 actor_process_command_line      // powershell.exe -enc <base64>
 causality_actor_process_*       // cmd.exe (parent)
+```
+
+</details>
+
+<details>
+<summary><b>⚡ XQL Performance Best Practices</b></summary>
+
+**Optimization: `filter` vs `alter` & Dataset Selection**
+
+| Feature | Best Practice (Fast) | Anti-Pattern (Slow) |
+| :--- | :--- | :--- |
+| **Filtering** | `filter` (Early reduction) | `alter` + `filter` (Calculate then filter) |
+| **Dataset** | Specific (e.g., `xdr_data`) | Wildcard/All (e.g., `presets = xdr_data`) |
+| **Fields** | `fields` (Select only needed) | Select * (All fields) |
+| **Joins** | Filter *before* joining | Join raw datasets |
+
+**Recommendation:** Apply `filter` immediately after `dataset`. Avoid complex `alter` calculations on the entire dataset; filter down first.
+
+```xql
+// ✅ GOOD - Filter immediately
+dataset = xdr_data
+| filter event_type = ENUM.PROCESS_LAUNCH and actor_process_image_name ~= "powershell.exe"
+| fields agent_hostname, actor_process_command_line
+
+// ❌ AVOID - Calculate on full dataset
+dataset = xdr_data
+| alter is_powershell = if(actor_process_image_name ~= "powershell.exe", true, false)
+| filter is_powershell = true
 ```
 
 </details>
@@ -487,7 +522,7 @@ Create custom dashboard in XDR:
 
 ### Submission Requirements
 
-✅ **Template compliance**  
+✅ **Template compliance** - Use `TEMPLATE_BIOC_Rule.xql` for production rules  
 ✅ **XDR environment testing**  
 ✅ **Test results** (TP/FP counts, query performance)  
 ✅ **Known false positives documented**  
