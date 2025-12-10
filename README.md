@@ -6,7 +6,7 @@
 [![MITRE ATT&CK](https://img.shields.io/badge/MITRE-ATT%26CK%20Mapped-red?style=for-the-badge)](https://attack.mitre.org/)
 [![Detections](https://img.shields.io/badge/Detections-Production%20Ready-blue?style=for-the-badge)]()
 
-**Enterprise XQL Detection Rules for Palo Alto Cortex XDR**
+**Enterprise XQL Detection Logic & Engineering Toolkit**
 
 *Curated by Mathan | Senior Security Engineer*
 
@@ -20,22 +20,19 @@
 
 ## 📋 Overview
 
-Production-validated XQL detection rules optimized for Cortex XDR's endpoint telemetry and BIOC (Behavioral Indicator of Compromise) framework.
+This repository is **two things in one**:
 
+1.  **📚 A Production Detection Library**: Optimized XQL detection rules optimized for Cortex XDR's endpoint telemetry and BIOC (Behavioral Indicator of Compromise) framework.
+2.  **🛠️ A Detection Engineering Toolkit**: A structured framework and set of "Golden Master" templates to help you build, test, and document your *own* custom BIOC rules.
+
+**Our Philosophy:** *Don't reinvent the wheel. Use our logic where it fits, modify it where it doesn't, or use our templates to build something entirely new.*
+
+### Key Features
 ✅ **Endpoint-optimized** - Leverages XDR's rich process/network/file data  
 ✅ **BIOC-ready** - Deployable as active detection rules  
 ✅ **Low latency** - Tuned for real-time detection  
 ✅ **Attack-chain aware** - Tracks causality relationships  
-✅ **MITRE-aligned** - Mapped to ATT&CK techniques  
-
-### Who This Is For
-
-| Role | Use Case |
-|------|----------|
-| **Detection Engineers** | Build XQL-based BIOC rules |
-| **SOC Analysts** | Investigate XDR alerts and hunt threats |
-| **Incident Responders** | Forensic analysis with XQL queries |
-| **Security Architects** | Design endpoint detection strategies |
+✅ **MITRE-aligned** - Mapped to ATT&CK techniques
 
 ---
 
@@ -95,323 +92,80 @@ Production-validated XQL detection rules optimized for Cortex XDR's endpoint tel
 ## 🚀 Quick Start
 
 ### Prerequisites
-
 - Cortex XDR Pro license
 - XDR agents deployed on endpoints
-- Required data sources enabled:
-  - ✅ Process Execution Telemetry
-  - ✅ Network Connection Logs
-  - ✅ File Operation Events
-  - ✅ Registry Modifications
-  - ✅ Authentication Events
+- Required data sources enabled (Process, Network, File, etc.)
 
+### How to Use This Library
 
+#### Option A: Deploy Existing Rules (Fastest) ⚡
+1.  **Browse** the categories above to find a relevant threat (e.g., `Endpoint/T1055_Process_Injection.xql`).
+2.  **Copy** the XQL query.
+3.  **Run** it in the XDR Query Builder to validate results on your data.
+4.  **Create** a BIOC Rule (`Response` → `BIOC Rules` → `+ New BIOC Rule`).
 
-### Test a Detection
+#### Option B: Build Custom Rules (Flexible) 🛠️
+1.  **Navigate** to the `templates/` directory.
+2.  **Choose** a template:
+    *   `TEMPLATE_BIOC_Rule.xql` for standard BIOC logic.
+    *   `TEMPLATE_Threat_Hunting.xql` for hypothesis generation.
+3.  **Customize** the logic using our commented best practices for XQL.
 
-1. **Log into Cortex XDR** → https://your-tenant.xdr.us.paloaltonetworks.com
-2. **Navigate to** Incidents → XQL Search (or Query Builder)
-3. **Copy** query from any `.xql` file
-4. **Run** query against your timeframe
-5. **Validate** results
-
-### Deploy as BIOC Rule
-
-1. **Response** → **BIOC Rules** → **+ New BIOC Rule**
-2. **Paste** XQL query
-3. **Configure**:
-   - Rule name: `T1055 - Process Injection Detection`
-   - Severity: High/Critical
-   - Response actions: (Optional) Isolate, Block, Quarantine
-4. **Save** and enable
+#### Option C: Modify Our Logic (Hybrid) 🔄
+1.  **Start** with an existing XQL query from this library.
+2.  **Add** environment-specific exclusions (e.g., `... | filter actor_process_image_name != "my_safe_app.exe"`).
+3.  **Deploy** as a custom BIOC rule.
 
 ---
 
 ## 📖 Detection Development Workflow
 
-### End-to-End Process
+Whether you are using our rules or building your own, we recommend this standard workflow:
 
 ```mermaid
 graph TD
-    A[1. Research Threat] --> B[2. Copy XQL Template]
-    B --> C[3. Write Query]
-    C --> D[4. Test in Query Center]
-    D --> E{Query Valid?}
-    E -->|No| F[Debug Syntax]
-    F --> D
-    E -->|Yes| G[5. Tune for FPs]
-    G --> H[6. Create BIOC Rule]
-    H --> I[7. Monitor 48hrs]
-    I --> J{FP Rate?}
-    J -->|>5%| K[Add Exclusions]
-    K --> H
-    J -->|<5%| L[Deploy to Prod]
+    A[1. Select Logic] --> B{Source?}
+    B -->|Our Library| C[3. Test in Query Center]
+    B -->|Custom Template| D[2. Write Query]
+    D --> C
+    C --> E{Query Valid?}
+    E -->|No| F[4. Debug Syntax]
+    F --> C
+    E -->|Yes| G[5. Monitor 48hrs]
+    G --> H{FP Rate?}
+    H -->|>5%| I[6. Add Exclusions]
+    I --> G
+    H -->|<5%| J[7. Deploy BIOC Rule]
     
     style A fill:#2563eb,color:#fff,stroke:#1e40af,stroke-width:3px
-    style L fill:#16a34a,color:#fff,stroke:#15803d,stroke-width:3px
+    style J fill:#16a34a,color:#fff,stroke:#15803d,stroke-width:3px
     style E fill:#ea580c,color:#fff,stroke:#c2410c,stroke-width:3px
-    style J fill:#ea580c,color:#fff,stroke:#c2410c,stroke-width:3px
 ```
 
-### 1. Understand the Threat
+### 1. The Logic Core (XQL)
+We use `filter` early and often to optimize performance and reduce scan load.
 
-Select a MITRE ATT&CK technique with endpoint visibility:
-
-- **T1055** - Process Injection ✅ Excellent XDR visibility
-- **T1059** - Command/Scripting ✅ Full command line capture
-- **T1071** - C2 Protocol ✅ Network telemetry available
-
-### 2. Copy the XQL Template
-
-```bash
-# Standard BIOC Rule (MITRE Aligned)
-cp templates/TEMPLATE_BIOC_Rule.xql Endpoint/T1055_Process_Injection.xql
-
-# Threat Hunting Hypothesis
-cp templates/TEMPLATE_Threat_Hunting.xql Endpoint/Hunt_T1055_Anomalies.xql
-
-# Behavioral Anomaly Detection
-cp templates/TEMPLATE_Anomaly_Detection.xql Endpoint/T1055_Baseline_Deviation.xql
-```
-
-### 3. Write the XQL Query
-
-Leverage Cortex XDR's data model:
-
+**Example Logic:**
 ```xql
 config case_sensitive = false timeframe = 24h
 | dataset = xdr_data
 | filter event_type = ENUM.INJECT_THREAD
     and action_remote_process_name != ""
-    and actor_process_image_name not in (
-        "c:\\windows\\system32\\svchost.exe",
-        "c:\\program files\\windows defender\\msmpeng.exe"
-    )
+    and actor_process_image_name not in ("svchost.exe", "msmpeng.exe")
 | fields 
-    _time,
-    agent_hostname,
-    actor_process_image_name,
-    actor_process_command_line,
-    action_remote_process_name,
-    causality_actor_process_image_name
-| alter severity = "CRITICAL",
-        detection_name = "Process Injection Detected"
+    _time, agent_hostname, actor_process_image_name, 
+    actor_process_command_line, causality_actor_process_image_name
+| alter severity = "CRITICAL", detection_name = "Process Injection"
 ```
 
-<details>
-<summary><b>💡 XQL Data Model Overview</b></summary>
+### 2. Testing & Validation
+Use **Event-Horizon** (our sister project) or Atomic Red Team to validate your detections.
 
-**Event Types:**
-- `PROCESS_LAUNCH` - Process creation
-- `INJECT_THREAD` - Thread injection
-- `NETWORK` - Network connections
-- `FILE` - File operations
-- `REGISTRY` - Registry changes
-- `LOAD_IMAGE` - DLL loads
-
-**Field Naming Convention:**
-- `actor_*` - The process performing the action
-- `action_*` - The action being performed
-- `causality_*` - The initiating process in the attack chain
-
-**Example:**
-```xql
-actor_process_image_name        // powershell.exe
-actor_process_command_line      // powershell.exe -enc <base64>
-causality_actor_process_*       // cmd.exe (parent)
-```
-
-</details>
-
-<details>
-<summary><b>⚡ XQL Performance Best Practices</b></summary>
-
-**Optimization: `filter` vs `alter` & Dataset Selection**
-
-| Feature | Best Practice (Fast) | Anti-Pattern (Slow) |
-| :--- | :--- | :--- |
-| **Filtering** | `filter` (Early reduction) | `alter` + `filter` (Calculate then filter) |
-| **Dataset** | Specific (e.g., `xdr_data`) | Wildcard/All (e.g., `presets = xdr_data`) |
-| **Fields** | `fields` (Select only needed) | Select * (All fields) |
-| **Joins** | Filter *before* joining | Join raw datasets |
-
-**Recommendation:** Apply `filter` immediately after `dataset`. Avoid complex `alter` calculations on the entire dataset; filter down first.
-
-```xql
-// ✅ GOOD - Filter immediately
-dataset = xdr_data
-| filter event_type = ENUM.PROCESS_LAUNCH and actor_process_image_name ~= "powershell.exe"
-| fields agent_hostname, actor_process_command_line
-
-// ❌ AVOID - Calculate on full dataset
-dataset = xdr_data
-| alter is_powershell = if(actor_process_image_name ~= "powershell.exe", true, false)
-| filter is_powershell = true
-```
-
-</details>
-
-### 4. Test in XDR Query Center
-
-```xql
-config timeframe = 30d  // Test over 30 days
-| dataset = xdr_data
-| [your query logic]
-| limit 1000  // Cap results for testing
-```
-
-**Validation:**
-- Query completes without errors
-- Results are relevant to threat
-- No missing or null critical fields  
-- Execution time < 60 seconds
-
-### 5. Tune for Your Environment
-
-```xql
-// Exclude known safe processes
-and actor_process_image_name not in (
-    "c:\\windows\\system32\\svchost.exe",
-    "c:\\program files\\mcafee\\agent\\macompatsvc.exe",
-    "c:\\program files (x86)\\your_app\\service.exe"
-)
-
-// Exclude specific hosts
-and agent_hostname not in (
-    "build-server-01",
-    "test-automation-host",
-    "dev-workstation-*"
-)
-
-// Adjust behavioral thresholds
-and action_file_size > 1048576  // Files > 1MB only
-```
-
-**Target:** <5% false positive rate
-
-### 6. Create BIOC Rule
-
-Transform query into active detection:
-
-**BIOC Rule Configuration:**
-- **Name:** T1055 - Process Injection Detection
-- **Severity:** High or Critical
-- **Scope:** All endp (or specific groups)
-- **Response Actions:**
-  - ✅ Create incident (always)
-  - ⚠️ Isolate endpoint (high confidence only)
-  - ⚠️ Block process (use with caution)
-
-### 7. Monitor & Iterate
-
-**First 48 hours:**
-- Review all triggered alerts
-- Classify TP vs FP
-- Add exclusions to BIOC rule
-- Adjust severity if needed
-
----
-
-## 🎓 XQL Language Primer
-
-### Query Structure
-
-```xql
-config [configuration options]
-| dataset = xdr_data
-| filter [Boolean conditions]
-| fields [columns to display]
-| alter [create/modify fields]
-| comp [aggregations] by [grouping]
-| sort / limit
-```
-
-### Essential Operators
-
-**String Matching:**
-```xql
-| filter process_name = "cmd.exe"              // Exact match
-| filter process_name ~= "powershell"          // Case-insensitive contains
-| filter process_name matches ".*\.exe$"       // Regex
-| filter process_name in ("cmd.exe", "ps.exe") // List membership
-```
-
-**Logical Operators:**
-```xql
-| filter event_type = ENUM.PROCESS_LAUNCH
-    and (process_name ~= "powershell" or process_name ~= "cmd")
-    and user_name != "SYSTEM"
-```
-
-**Aggregation:**
-```xql
-// Count events by hostname
-| comp count() as event_count by agent_hostname
-| filter event_count > 100
-
-// Find unique values
-| comp values(src_ip) as source_ips by user_name
-
-// Time-based binning
-| bin _time span = 1h
-| comp count() as hourly_count by _time
-```
-
-### Common Detection Patterns
-
-<details>
-<summary><b>PowerShell Encoded Command</b></summary>
-
-```xql
-config case_sensitive = false timeframe = 7d
-| dataset = xdr_data
-| filter event_type = ENUM.PROCESS_LAUNCH
-    and actor_process_image_name ~= "powershell.exe"
-    and (actor_process_command_line contains "-encodedcommand"
-         or actor_process_command_line contains "-enc")
-| fields agent_hostname, actor_effective_username, 
-         actor_process_command_line
-```
-
-</details>
-
-<details>
-<summary><b>Suspicious Network Connection</b></summary>
-
-```xql
-config case_sensitive = false timeframe = 24h
-| dataset = xdr_data
-| filter event_type = ENUM.NETWORK
-    and action_remote_port in (4444, 5555, 6666, 8080)
-    and action_remote_ip_type = "PUBLIC"
-| comp count() as connection_count by agent_hostname, action_remote_ip
-| filter connection_count > 50
-```
-
-</details>
-
-<details>
-<summary><b>Credential Dumping (LSASS Access)</b></summary>
-
-```xql
-config case_sensitive = false timeframe = 24h
-| dataset = xdr_data
-| filter event_type = ENUM.PROCESS_LAUNCH
-    and (action_process_image_name ~= "lsass.exe"
-         or actor_process_command_line contains "lsass")
-    and actor_process_image_name not in (
-        "c:\\windows\\system32\\wbem\\wmiprvse.exe",
-        "c:\\windows\\system32\\taskmgr.exe"
-    )
-```
-
-</details>
+**Recommended Tool:** [Event-Horizon](https://github.com/PrototypePrime/Event-Horizon)
 
 ---
 
 ## 📊 XDR Data Sources & Coverage
-
-### Data Source Availability
 
 | Data Source | Event Type | Detection Use Cases |
 |-------------|------------|---------------------|
@@ -419,180 +173,45 @@ config case_sensitive = false timeframe = 24h
 | **Thread Injection** | `INJECT_THREAD` | Process injection, code injection |
 | **Network Connections** | `NETWORK` | C2, beaconing, data exfiltration |
 | **File Operations** | `FILE` | Ransomware, data staging, webshells |
-| **Registry Changes** | `REGISTRY` | Persistence, defense evasion |
-| **DLL Loads** | `LOAD_IMAGE` | DLL hijacking, malicious libraries |
-| **Authentication** | `EVENT_LOG` | Lateral movement, privilege abuse |
-
-### Field Reference by Event Type
-
-**Process Events:**
-```xql
-actor_process_image_name         // Process name
-actor_process_command_line       // Full command
-actor_process_image_path         // Full path
-actor_effective_username         // User context
-causality_actor_process_*        // Parent process
-```
-
-**Network Events:**
-```xql
-action_remote_ip                 // Destination IP
-action_remote_port               // Destination port
-action_local_port                // Source port
-dst_action_external_hostname     // DNS resolution
-action_app_id_transitions        // Protocol/app ID
-```
-
-**File Events:**
-```xql
-action_file_path                 // File location
-action_file_name                 // File name
-action_file_sha256               // File hash
-action_file_size                 // Size in bytes
-```
-
----
-
-## 🧪 Testing & Validation
-
-### Atomic Red Team Integration
-
-Validate detections with attack simulation:
-
-```powershell
-# Install Atomic Red Team
-Install-Module -Name invoke-atomicredteam -Scope CurrentUser
-Import-Module invoke-atomicredteam
-
-# Test specific technique
-Invoke-AtomicTest T1055 -TestNumbers 1
-
-# Verify XDR alert generated
-# Check Incidents → Incidents or run XQL query
-```
-
-### Manual Validation Checklist
-
-- [ ] Query syntax valid (no errors)
-- [ ] Results on 30 days of data (if threat present)
-- [ ] No triggers on benign activity
-- [ ] Execution time < 60 seconds
-- [ ] BIOC rule creates incident
-- [ ] Incident fields populated correctly
-- [ ] Response actions work as expected
-
----
-
-## 📈 Detection Performance Monitoring
-
-### Query Performance
-
-```xql
-// Check for slow queries (run in XDR)
-config timeframe = 7d
-| dataset = xdr_data
-| filter event_type = ENUM.ANALYTICS
-    and analytics_name ~= "BIOC"
-| fields analytics_name, analytics_execution_time
-| alter execution_seconds = to_number(analytics_execution_time) / 1000
-| filter execution_seconds > 30
-| sort execution_seconds desc
-```
-
-### Alert Volume Tracking
-
-Create custom dashboard in XDR:
-- Alert volume by BIOC rule
-- Top alerting endpoints
-- BIOC rule execution times
-- Incident creation rate
 
 ---
 
 ## 🤝 Contributing
 
-### Contribution Process
+We welcome contributions! If you've created a rule using our templates or optimized one of ours:
 
-1. Fork repository
-2. Create feature branch
-3. Add detection using template
-4. Test comprehensively in XDR
-5. Document test results
-6. Submit Pull Request
-
-### Submission Requirements
-
-✅ **Template compliance** - Use `TEMPLATE_BIOC_Rule.xql` for production rules  
-✅ **XDR environment testing**  
-✅ **Test results** (TP/FP counts, query performance)  
-✅ **Known false positives documented**  
-✅ **XDR console screenshots**  
-✅ **MITRE ATT&CK mapping**  
-
----
-
-## 📚 Resources
-
-### Cortex XDR Documentation
-- [XQL Language Reference](https://docs.paloaltonetworks.com/cortex/cortex-xdr/cortex-xdr-pro-admin/investigation/xql-reference)
-- [BIOC Rules Guide](https://docs.paloaltonetworks.com/cortex/cortex-xdr/cortex-xdr-pro-admin/investigation/create-bioc-rules)
-- [XDR Query Builder](https://docs.paloaltonetworks.com/cortex/cortex-xdr/cortex-xdr-pro-admin/investigation/query-builder)
-- [API Documentation](https://docs.paloaltonetworks.com/cortex/cortex-xdr/cortex-xdr-api)
-
-### Detection Engineering
-- [MITRE ATT&CK](https://attack.mitre.org/)
-- [Atomic Red Team](https://github.com/redcanaryco/atomic-red-team)
-- [LOLBAS Project](https://lolbas-project.github.io/)
-
-### Community
-- [Palo Alto Live Community](https://live.paloaltonetworks.com/)
-- [Cortex XDR Forum](https://live.paloaltonetworks.com/t5/cortex-xdr-discussions/bd-p/Cortex_XDR_Discussions)
+1.  **Fork** this repository.
+2.  **Create** a feature branch.
+3.  **Submit** a Pull Request with your detection logic and testing results.
 
 ---
 
 ## 👤 About
 
-### Author
-
+### Implementation & Maintenance
 **PrototypePrime (Mathan Subbiah)**  
 *Senior Security Engineer | Detection Engineering Specialist*
 
-Specializing in endpoint detection, threat hunting, and building scalable security systems. Core focus: reducing adversary dwell time through proactive, high-fidelity detections across EDR/XDR platforms.
+Specializing in endpoint detection, threat hunting, and building scalable security systems.
 
 [![GitHub](https://img.shields.io/badge/GitHub-PrototypePrime-181717?logo=github&style=flat-square)](https://github.com/PrototypePrime)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Mathan%20Subbiah-0A66C2?logo=linkedin&style=flat-square)](https://www.linkedin.com/in/mathan-subbiah-0bb47aa8/)
 [![Email](https://img.shields.io/badge/Email-mathan1702%40gmail.com-D14836?logo=gmail&style=flat-square)](mailto:mathan1702@gmail.com)
 
 ### Related Projects
-
-**Detection Libraries:**
+- [Event-Horizon](https://github.com/PrototypePrime/Event-Horizon) - Production-quality security log generator
 - [Splunk SPL Detection](https://github.com/PrototypePrime/Splunk_SPL_Detection)
 - [Microsoft Defender KQL Detection](https://github.com/PrototypePrime/Microsoft_Defender_KQL_Detection)
 
-**Security Tools:**
-- [Event-Horizon](https://github.com/PrototypePrime/Event-Horizon) - Security log generator
-
 ---
-
-## 📞 Support
-
-- **Issues:** [GitHub Issues](https://github.com/PrototypePrime/Cortex_XDR_XQL_Detection/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/PrototypePrime/Cortex_XDR_XQL_Detection/discussions)
-- **Email:** mathan1702@gmail.com
 
 ## 📄 License
-
-MIT License - see [LICENSE](LICENSE) file
-
----
+MIT License - see [LICENSE](LICENSE) file for details.
 
 <div align="center">
 
 ### ⭐ Star This Repository!
-
 *Help other detection engineers discover these XQL rules*
-
-**Part of the PrototypePrime Detection Engineering Collection**
 
 ![Visitors](https://visitor-badge.laobi.icu/badge?page_id=PrototypePrime.Cortex_XDR_XQL_Detection)
 
