@@ -20,12 +20,12 @@
 
 ## 📋 Overview
 
-This repository is **two things in one**:
+This repository provides **production-ready XQL detection rules** and **BIOC engineering methodology**:
 
-1.  **📚 A Production Detection Library**: Optimized XQL detection rules optimized for Cortex XDR's endpoint telemetry and BIOC (Behavioral Indicator of Compromise) framework.
-2.  **🛠️ A Detection Engineering Toolkit**: A structured framework and set of "Golden Master" templates to help you build, test, and document your *own* custom BIOC rules.
+1.  **📚 Production Detection Library**: High-fidelity XQL rules optimized for Cortex XDR's endpoint telemetry and BIOC (Behavioral Indicator of Compromise) framework.
+2.  **🛠️ Detection Engineering Reference**: Proven XQL patterns demonstrating professional BIOC rule development, performance optimization, and documentation standards.
 
-**Our Philosophy:** *Don't reinvent the wheel. Use our logic where it fits, modify it where it doesn't, or use our templates to build something entirely new.*
+**Repository Value:** *Deploy our BIOC logic immediately, tune it for your environment, or reference our proven patterns when developing custom endpoint detections.*
 
 ### Key Features
 ✅ **Endpoint-optimized** - Leverages XDR's rich process/network/file data  
@@ -98,23 +98,24 @@ This repository is **two things in one**:
 
 ### How to Use This Library
 
-#### Option A: Deploy Existing Rules (Fastest) ⚡
-1.  **Browse** the categories above to find a relevant threat (e.g., `Endpoint/T1055_Process_Injection.xql`).
-2.  **Copy** the XQL query.
-3.  **Run** it in the XDR Query Builder to validate results on your data.
-4.  **Create** a BIOC Rule (`Response` → `BIOC Rules` → `+ New BIOC Rule`).
+#### Option A: Deploy Production BIOC Rules (Recommended) ⚡
+1.  **Browse** detection categories (e.g., `Endpoint/T1055_Process_Injection.xql`).
+2.  **Copy** the production-ready XQL query.
+3.  **Validate** in XDR Query Builder against your endpoint telemetry.
+4.  **Deploy** as BIOC Rule (`Response` → `BIOC Rules` → `+ New BIOC Rule`).
 
-#### Option B: Build Custom Rules (Flexible) 🛠️
-1.  **Navigate** to the `templates/` directory.
-2.  **Choose** a template:
-    *   `TEMPLATE_BIOC_Rule.xql` for standard BIOC logic.
-    *   `TEMPLATE_Threat_Hunting.xql` for hypothesis generation.
-3.  **Customize** the logic using our commented best practices for XQL.
+#### Option B: Adapt for Your Environment (Flexible) 🛠️
+1.  **Start** with a production BIOC rule from the library.
+2.  **Tune** for your endpoint environment:
+    *   Add process exclusions for legitimate tools
+    *   Adjust causality chain filters
+    *   Modify event type filters based on your telemetry
+3.  **Reference** the `templates/` directory for XQL pattern examples.
 
-#### Option C: Modify Our Logic (Hybrid) 🔄
-1.  **Start** with an existing XQL query from this library.
-2.  **Add** environment-specific exclusions (e.g., `... | filter actor_process_image_name != "my_safe_app.exe"`).
-3.  **Deploy** as a custom BIOC rule.
+#### Option C: Contribute Back (Community) 🤝
+1.  **Fork** this repository.
+2.  **Enhance** existing BIOC rules or contribute new detection logic.
+3.  **Submit** a Pull Request with testing results to share with the community.
 
 ---
 
@@ -161,7 +162,7 @@ config case_sensitive = false timeframe = 24h
 ### 2. Testing & Validation
 Use **Event-Horizon** (our sister project) or Atomic Red Team to validate your detections.
 
-**Recommended Tool:** [Event-Horizon](https://github.com/PrototypePrime/Event-Horizon)
+**Recommended Tool:** [Event-Horizon](https://github.com/PrototypePrime/Event_Horizon)
 
 ---
 
@@ -199,7 +200,7 @@ Specializing in endpoint detection, threat hunting, and building scalable securi
 [![Email](https://img.shields.io/badge/Email-mathan1702%40gmail.com-D14836?logo=gmail&style=flat-square)](mailto:mathan1702@gmail.com)
 
 ### Related Projects
-- [Event-Horizon](https://github.com/PrototypePrime/Event-Horizon) - Production-quality security log generator
+- [Event-Horizon](https://github.com/PrototypePrime/Event_Horizon) - Production-quality security log generator
 - [Splunk SPL Detection](https://github.com/PrototypePrime/Splunk_SPL_Detection)
 - [Microsoft Defender KQL Detection](https://github.com/PrototypePrime/Microsoft_Defender_KQL_Detection)
 
